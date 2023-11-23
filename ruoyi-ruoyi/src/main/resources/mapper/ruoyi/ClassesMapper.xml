@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ruoyi.ruoyi.mapper.ClassesMapper">
+    
+    <resultMap type="Classes" id="ClassesResult">
+        <result property="id"    column="id"    />
+        <result property="classId"    column="class_id"    />
+        <result property="className"    column="class_name"    />
+        <result property="departmentId"    column="department_id"    />
+        <result property="headMaster"    column="head_master"    />
+        <result property="headMasterPhone"    column="head_master_phone"    />
+        <result property="classType"    column="class_type"    />
+        <result property="status"    column="status"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+        <association property="department" javaType="Department" column="department_id">
+            <result property="departmentName"    column="department_name"    />
+            <result property="address"    column="address"    />
+            <result property="phone"    column="phone"    />
+        </association>
+    </resultMap>
+
+    <sql id="selectClassesVo">
+        select ruoyi_classes.*,ruoyi_department.department_id,ruoyi_department.department_name,ruoyi_department.address,ruoyi_department.phone
+        FROM ruoyi_classes
+        LEFT JOIN ruoyi_department
+        ON ruoyi_classes.department_id=ruoyi_department.department_id
+    </sql>
+
+    <select id="selectClassesList" parameterType="Classes" resultMap="ClassesResult">
+        <include refid="selectClassesVo"/>
+        <where>
+            <if test="id != null">and ruoyi_classes.id = #{id},</if>
+            <if test="classId != null  and classId != ''"> and class_id like concat('%', #{classId}, '%')</if>
+            <if test="className != null  and className != ''"> and class_name like concat('%', #{className}, '%')</if>
+            <if test="departmentId != null  and departmentId != ''"> and ruoyi_classes.department_id = #{departmentId}</if>
+            <if test="headMaster != null  and headMaster != ''"> and head_master like concat('%', #{headMaster}, '%')</if>
+            <if test="headMasterPhone != null  and headMasterPhone != ''"> and head_master_phone = #{headMasterPhone}</if>
+            <if test="classType != null  and classType != ''"> and class_type = #{classType}</if>
+            <if test="status != null  and status != ''"> and ruoyi_classes.status = #{status}</if>
+            <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+                and date_format(ruoyi_classes.create_time,'%y%m%d%H%i%s') &gt;= date_format(#{params.beginTime},'%y%m%d%H%i%s')
+            </if>
+            <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+                and date_format(ruoyi_classes.create_time,'%y%m%d%T') &lt;= date_format(#{params.endTime},'%y%m%d%H%i%s')
+            </if>
+        </where>
+    </select>
+
+    <select id="selectClassesList1" parameterType="Classes" resultMap="ClassesResult">
+        <include refid="selectClassesVo"/>
+        <where>
+            <if test="id != null">and ruoyi_classes.id = #{id},</if>
+            <if test="classId != null  and classId != ''"> and class_id = #{classId}</if>
+            <if test="className != null  and className != ''"> and class_name = #{className}</if>
+            <if test="departmentId != null  and departmentId != ''"> and ruoyi_classes.department_id = #{departmentId}</if>
+            <if test="headMaster != null  and headMaster != ''"> and head_master like concat('%', #{headMaster}, '%')</if>
+            <if test="headMasterPhone != null  and headMasterPhone != ''"> and head_master_phone = #{headMasterPhone}</if>
+            <if test="classType != null  and classType != ''"> and class_type = #{classType}</if>
+            <if test="status != null  and status != ''"> and ruoyi_classes.status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectClassesById" parameterType="Long" resultMap="ClassesResult">
+        <include refid="selectClassesVo"/>
+        where ruoyi_classes.id = #{id}
+    </select>
+        
+    <insert id="insertClasses" parameterType="Classes" useGeneratedKeys="true" keyProperty="id">
+        insert into ruoyi_classes
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="classId != null and classId != ''">class_id,</if>
+            <if test="className != null and className != ''">class_name,</if>
+            <if test="departmentId != null and departmentId != ''">ruoyi_classes.department_id,</if>
+            <if test="headMaster != null">head_master,</if>
+            <if test="headMasterPhone != null">head_master_phone,</if>
+            <if test="classType != null">class_type,</if>
+            <if test="status != null">status,</if>
+            <if test="createBy != null">create_by,</if>
+            <if test="createTime != null">create_time,</if>
+            <if test="updateBy != null">update_by,</if>
+            <if test="updateTime != null">update_time,</if>
+            <if test="remark != null">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="classId != null and classId != ''">#{classId},</if>
+            <if test="className != null and className != ''">#{className},</if>
+            <if test="departmentId != null and departmentId != ''">#{departmentId},</if>
+            <if test="headMaster != null">#{headMaster},</if>
+            <if test="headMasterPhone != null">#{headMasterPhone},</if>
+            <if test="classType != null">#{classType},</if>
+            <if test="status != null">#{status},</if>
+            <if test="createBy != null">#{createBy},</if>
+            <if test="createTime != null">#{createTime},</if>
+            <if test="updateBy != null">#{updateBy},</if>
+            <if test="updateTime != null">#{updateTime},</if>
+            <if test="remark != null">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateClasses" parameterType="Classes">
+        update ruoyi_classes
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="classId != null and classId != ''">class_id = #{classId},</if>
+            <if test="className != null and className != ''">class_name = #{className},</if>
+            <if test="departmentId != null and departmentId != ''">ruoyi_classes.department_id = #{departmentId},</if>
+            <if test="headMaster != null">head_master = #{headMaster},</if>
+            <if test="headMasterPhone != null">head_master_phone = #{headMasterPhone},</if>
+            <if test="classType != null">class_type = #{classType},</if>
+            <if test="status != null">status = #{status},</if>
+            <if test="createBy != null">create_by = #{createBy},</if>
+            <if test="createTime != null">create_time = #{createTime},</if>
+            <if test="updateBy != null">update_by = #{updateBy},</if>
+            <if test="updateTime != null">update_time = #{updateTime},</if>
+            <if test="remark != null">remark = #{remark},</if>
+        </trim>
+        where id = #{id}
+    </update>
+
+    <delete id="deleteClassesById" parameterType="Long">
+        delete from ruoyi_classes where ruoyi_classes.id = #{id}
+    </delete>
+
+    <delete id="deleteClassesByIds" parameterType="String">
+        delete from ruoyi_classes where ruoyi_classes.id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+</mapper>
